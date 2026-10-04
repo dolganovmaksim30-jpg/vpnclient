@@ -1,0 +1,27 @@
+name: Build IPA
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        run: xcodegen generate
+      - name: Build archive
+        run: |
+          xcodebuild -project VPNClient.xcodeproj -scheme VPNClient -configuration Release -sdk iphoneos -archivePath build/VPNClient.xcarchive archive CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO | xcpretty || true
+      - name: Package IPA
+        run: |
+          mkdir -p build/Payload
+          cp -r build/VPNClient.xcarchive/Products/Applications/VPNClient.app build/Payload/
+          cd build && zip -r VPNClient.ipa Payload
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: VPNClient-IPA
+          path: build/VPNClient.ipa

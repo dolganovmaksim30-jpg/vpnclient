@@ -1,0 +1,48 @@
+name: VPNClient
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGNING_REQUIRED: "NO"
+    CODE_SIGNING_ALLOWED: "NO"
+    CODE_SIGN_IDENTITY: ""
+targets:
+  VPNClient:
+    type: application
+    platform: iOS
+    sources:
+      - VPNClient
+      - Shared
+    info:
+      path: VPNClient/Info.plist
+    entitlements:
+      path: VPNClient/VPNClient.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.vpnclient
+        INFOPLIST_KEY_CFBundleDisplayName: "VPN Client"
+        TARGETED_DEVICE_FAMILY: "1"
+        GENERATE_INFOPLIST_FILE: NO
+    dependencies:
+      - target: VPNTunnel
+        embed: true
+  VPNTunnel:
+    type: app-extension
+    platform: iOS
+    sources:
+      - VPNTunnel
+      - Shared
+    info:
+      path: VPNTunnel/Info.plist
+    entitlements:
+      path: VPNTunnel/VPNTunnel.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.vpnclient.tunnel
+        GENERATE_INFOPLIST_FILE: NO
